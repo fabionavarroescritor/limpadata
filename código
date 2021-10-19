@@ -1,0 +1,78 @@
+import com.hamoid.*;
+VideoExport videoExport;
+
+PFont fonte;
+
+float t1, t2, spc, f1, f2;
+
+
+void setup() {
+
+  //String[] fontlist=PFont.list();
+  //printArray(fontlist);
+
+  size(1200, 710, P2D);
+  smooth(8);
+
+  fonte = createFont("Pixel Font-7", 70);
+  textFont(fonte);
+
+  videoExport = new VideoExport(this, "limpadata2.mp4");
+  videoExport.setFrameRate(30);
+  videoExport.startMovie();
+}
+
+void draw() {
+
+  videoExport.saveFrame();
+
+  String plvr = "LIMPADATA";
+
+  background(255);
+  
+  t1+=0.01;
+  t2+=0.02;
+  spc = 55;
+  f1 += 0.000031;
+  f2 =+ 0.000042;
+
+  for (int x = 0; x < width/spc; x++) {
+    for (int y = 0; y < height/spc; y++) {
+
+      //float px = sin(y*7.5+t1)*220;
+      //float py = cos(x*8.5+t2)*220;
+      float mx = map(x+y, 0, width/spc, 0, 255);
+      float my = map(x+y, 0, height/spc, 0, 255);
+      float mz = lerp(x, y, 0.02);
+      float mz1 = lerp(x, y, 0.52);
+      float mz2 = lerp(x, y, 0.92);
+      
+      float nx = tan(mx*f1+f2)*width/spc;
+      float ny = tan(mx*f1+f2)*height/spc;
+
+      float nsx = noise(x+y*8.5+t1)*plvr.length();
+
+      fill(mx+mz, mz1+mz2, my+mz);
+     
+      textSize(35);
+
+      if (x%2 == 0 && y%2 ==0) {
+        text(plvr.charAt(int(x+nsx)%plvr.length()), x*spc+nx, y*spc);
+      } else {
+
+        ellipseMode(CENTER);
+        noStroke();
+        ellipse(x*spc+ny, y*spc, spc, spc);
+      }
+    }
+  }
+  if (mousePressed == true) {
+    saveFrame("salva/salva-##.png");
+  }
+}
+void keyPressed() {
+  if (key == 'q') {
+    videoExport.endMovie();
+    exit();
+  }
+}
